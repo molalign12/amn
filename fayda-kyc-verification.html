@@ -1,0 +1,773 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fayda National ID Verification</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #1a472a 0%, #2d5a3d 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .fayda-container {
+            width: 100%;
+            max-width: 500px;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+        }
+
+        .fayda-header {
+            background: linear-gradient(135deg, #1a472a 0%, #2d5a3d 100%);
+            padding: 32px 24px;
+            text-align: center;
+            color: white;
+        }
+
+        .fayda-logo {
+            font-size: 14px;
+            font-weight: 600;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+        }
+
+        .fayda-flag {
+            font-size: 24px;
+            margin-bottom: 12px;
+        }
+
+        .fayda-title {
+            font-size: 22px;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .fayda-subtitle {
+            font-size: 13px;
+            opacity: 0.9;
+            font-weight: 400;
+        }
+
+        .fayda-content {
+            padding: 32px 24px;
+        }
+
+        /* STEP 1: START STATE */
+        .fayda-step {
+            display: none;
+            animation: fadeIn 0.3s ease-in;
+        }
+
+        .fayda-step.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .fayda-form-group {
+            margin-bottom: 20px;
+        }
+
+        .fayda-label {
+            display: block;
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #1a472a;
+        }
+
+        .fayda-input {
+            width: 100%;
+            padding: 12px 14px;
+            font-size: 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            font-family: 'Courier New', monospace;
+            letter-spacing: 2px;
+        }
+
+        .fayda-input:focus {
+            outline: none;
+            border-color: #1a472a;
+            box-shadow: 0 0 0 3px rgba(26, 71, 42, 0.1);
+        }
+
+        .fayda-input::placeholder {
+            color: #999;
+            letter-spacing: 0;
+        }
+
+        .fayda-info-text {
+            font-size: 12px;
+            color: #666;
+            margin-top: 6px;
+        }
+
+        .fayda-button {
+            width: 100%;
+            padding: 12px 16px;
+            font-size: 15px;
+            font-weight: 600;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .fayda-button-primary {
+            background: linear-gradient(135deg, #1a472a 0%, #2d5a3d 100%);
+            color: white;
+        }
+
+        .fayda-button-primary:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(26, 71, 42, 0.3);
+        }
+
+        .fayda-button-primary:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .fayda-button-primary.loading {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .fayda-spinner {
+            width: 16px;
+            height: 16px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-top-color: white;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* STEP 2: OTP STATE */
+        .otp-container {
+            text-align: center;
+        }
+
+        .otp-message {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 24px;
+            line-height: 1.5;
+        }
+
+        .otp-inputs {
+            display: flex;
+            gap: 8px;
+            justify-content: center;
+            margin-bottom: 24px;
+        }
+
+        .otp-input {
+            width: 50px;
+            height: 50px;
+            font-size: 24px;
+            font-weight: 700;
+            text-align: center;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            transition: all 0.2s;
+            font-family: 'Courier New', monospace;
+        }
+
+        .otp-input:focus {
+            outline: none;
+            border-color: #1a472a;
+            box-shadow: 0 0 0 3px rgba(26, 71, 42, 0.1);
+        }
+
+        .otp-input.filled {
+            border-color: #1a472a;
+            background: #f5f5f5;
+        }
+
+        .otp-resend {
+            font-size: 13px;
+            color: #666;
+        }
+
+        .otp-resend a {
+            color: #1a472a;
+            text-decoration: none;
+            font-weight: 600;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+
+        .otp-resend a:hover {
+            color: #2d5a3d;
+            text-decoration: underline;
+        }
+
+        .otp-resend.disabled a {
+            opacity: 0.5;
+            cursor: not-allowed;
+            text-decoration: none;
+        }
+
+        /* STEP 3: SUCCESS STATE */
+        .success-container {
+            text-align: center;
+        }
+
+        .success-animation {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 24px;
+            background: #f0f8f4;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: popIn 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        @keyframes popIn {
+            0% {
+                transform: scale(0);
+                opacity: 0;
+            }
+            50% {
+                transform: scale(1.1);
+            }
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        .checkmark {
+            font-size: 48px;
+            color: #1a472a;
+        }
+
+        .success-message {
+            font-size: 18px;
+            font-weight: 700;
+            color: #1a472a;
+            margin-bottom: 8px;
+        }
+
+        .success-submessage {
+            font-size: 13px;
+            color: #666;
+            margin-bottom: 24px;
+        }
+
+        .profile-card {
+            background: #f9f9f9;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            padding: 20px;
+            text-align: left;
+            margin-bottom: 20px;
+        }
+
+        .profile-header {
+            display: flex;
+            gap: 16px;
+            margin-bottom: 16px;
+            align-items: flex-start;
+        }
+
+        .profile-avatar {
+            width: 64px;
+            height: 64px;
+            background: linear-gradient(135deg, #1a472a 0%, #2d5a3d 100%);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 28px;
+            flex-shrink: 0;
+        }
+
+        .profile-info {
+            flex: 1;
+        }
+
+        .profile-name {
+            font-size: 16px;
+            font-weight: 700;
+            color: #1a472a;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-bottom: 4px;
+        }
+
+        .verified-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            background: #e8f5e9;
+            color: #1a472a;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        .profile-name-amharic {
+            font-size: 13px;
+            color: #999;
+            margin-bottom: 6px;
+            font-family: 'Times New Roman', serif;
+        }
+
+        .profile-detail {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid #e0e0e0;
+            font-size: 13px;
+        }
+
+        .profile-detail:last-child {
+            border-bottom: none;
+        }
+
+        .profile-label {
+            color: #999;
+            font-weight: 500;
+        }
+
+        .profile-value {
+            color: #1a472a;
+            font-weight: 600;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 12px;
+        }
+
+        .fayda-button-secondary {
+            flex: 1;
+            background: #f0f0f0;
+            color: #1a472a;
+            border: 2px solid #e0e0e0;
+        }
+
+        .fayda-button-secondary:hover {
+            background: #e8e8e8;
+        }
+
+        .error-message {
+            background: #ffebee;
+            color: #c62828;
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 13px;
+            margin-bottom: 16px;
+            display: none;
+        }
+
+        .error-message.show {
+            display: block;
+            animation: slideDown 0.3s ease;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @media (max-width: 480px) {
+            .fayda-content {
+                padding: 24px 16px;
+            }
+
+            .fayda-header {
+                padding: 24px 16px;
+            }
+
+            .fayda-title {
+                font-size: 18px;
+            }
+
+            .otp-inputs {
+                gap: 4px;
+            }
+
+            .otp-input {
+                width: 40px;
+                height: 40px;
+                font-size: 18px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="fayda-container">
+        <!-- Header -->
+        <div class="fayda-header">
+            <div class="fayda-flag">🇪🇹</div>
+            <div class="fayda-logo">Fayda National ID</div>
+            <div class="fayda-title">E-KYC Verification</div>
+            <div class="fayda-subtitle">Ethiopian Digital Identity</div>
+        </div>
+
+        <!-- Content -->
+        <div class="fayda-content">
+            <!-- STEP 1: START STATE -->
+            <div class="fayda-step active" id="step1">
+                <div class="error-message" id="errorMessage"></div>
+                <form id="finForm">
+                    <div class="fayda-form-group">
+                        <label class="fayda-label">Fayda Identification Number (FIN)</label>
+                        <input
+                            type="text"
+                            id="finInput"
+                            class="fayda-input"
+                            placeholder="000000000000"
+                            maxlength="12"
+                            inputmode="numeric"
+                            required
+                        >
+                        <div class="fayda-info-text">Enter your 12-digit FIN from your National ID card</div>
+                    </div>
+
+                    <button type="submit" class="fayda-button fayda-button-primary" id="verifyBtn">
+                        Verify Identity
+                    </button>
+                </form>
+            </div>
+
+            <!-- STEP 2: OTP STATE -->
+            <div class="fayda-step" id="step2">
+                <div class="error-message" id="errorMessage2"></div>
+                <div class="otp-container">
+                    <div class="otp-message">
+                        Enter the 6-digit code sent to your registered phone number
+                        <br>
+                        <strong id="phoneDisplay">+251 9XX XXX XXX</strong>
+                    </div>
+
+                    <form id="otpForm">
+                        <div class="otp-inputs" id="otpInputs">
+                            <input type="text" class="otp-input" maxlength="1" inputmode="numeric" required>
+                            <input type="text" class="otp-input" maxlength="1" inputmode="numeric" required>
+                            <input type="text" class="otp-input" maxlength="1" inputmode="numeric" required>
+                            <input type="text" class="otp-input" maxlength="1" inputmode="numeric" required>
+                            <input type="text" class="otp-input" maxlength="1" inputmode="numeric" required>
+                            <input type="text" class="otp-input" maxlength="1" inputmode="numeric" required>
+                        </div>
+
+                        <button type="submit" class="fayda-button fayda-button-primary" id="verifyOtpBtn">
+                            Verify OTP
+                        </button>
+                    </form>
+
+                    <div class="otp-resend">
+                        Didn't receive code?
+                        <a href="#" id="resendLink">Resend</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- STEP 3: SUCCESS STATE -->
+            <div class="fayda-step" id="step3">
+                <div class="success-container">
+                    <div class="success-animation">
+                        <div class="checkmark">✓</div>
+                    </div>
+
+                    <div class="success-message">Verification Successful!</div>
+                    <div class="success-submessage">Your identity has been verified</div>
+
+                    <div class="profile-card">
+                        <div class="profile-header">
+                            <div class="profile-avatar">👤</div>
+                            <div class="profile-info">
+                                <div class="profile-name">
+                                    <span id="userName">Abebe Kebede</span>
+                                    <span class="verified-badge">✓ Verified</span>
+                                </div>
+                                <div class="profile-name-amharic" id="userNameAmharic">አበበ ከበደ</div>
+                            </div>
+                        </div>
+
+                        <div class="profile-detail">
+                            <span class="profile-label">FIN</span>
+                            <span class="profile-value" id="userFin">000000000000</span>
+                        </div>
+                        <div class="profile-detail">
+                            <span class="profile-label">Date of Birth</span>
+                            <span class="profile-value" id="userDob">01/15/1990</span>
+                        </div>
+                        <div class="profile-detail">
+                            <span class="profile-label">Gender</span>
+                            <span class="profile-value" id="userGender">Male</span>
+                        </div>
+                        <div class="profile-detail">
+                            <span class="profile-label">Issue Date</span>
+                            <span class="profile-value" id="userIssueDate">05/01/2020</span>
+                        </div>
+                        <div class="profile-detail">
+                            <span class="profile-label">Expiry Date</span>
+                            <span class="profile-value" id="userExpiryDate">04/30/2030</span>
+                        </div>
+                    </div>
+
+                    <div class="action-buttons">
+                        <button type="button" class="fayda-button fayda-button-secondary" onclick="resetVerification()">
+                            Start Over
+                        </button>
+                        <button type="button" class="fayda-button fayda-button-primary" onclick="completeVerification()">
+                            Continue
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Mock data generator
+        function generateMockUser(fin) {
+            const firstNames = ['Abebe', 'Almaz', 'Tadesse', 'Mekelle', 'Yohannes', 'Tigist', 'Solomon', 'Adanech'];
+            const lastNames = ['Kebede', 'Assefa', 'Mulugeta', 'Tekle', 'Gebru', 'Teklemariam', 'Selassie', 'Asfaw'];
+            
+            const amharicNames = ['አበበ', 'አልማዝ', 'ታደሰ', 'መቐሌ', 'ዮሃንስ', 'ትግስት', 'ሰለሞን', 'አዳነች'];
+            const amharicLastNames = ['ከበደ', 'አሰፋ', 'ሙሉጌታ', 'ተክሌ', 'ገብሩ', 'ተክለማርያም', 'ሰላሴ', 'አስፋው'];
+            
+            const genders = ['Male', 'Female'];
+            
+            const randomIndex = (arr) => Math.floor(Math.random() * arr.length);
+            
+            return {
+                fin: fin,
+                firstName: firstNames[randomIndex(firstNames)],
+                lastName: lastNames[randomIndex(lastNames)],
+                firstNameAmharic: amharicNames[randomIndex(amharicNames)],
+                lastNameAmharic: amharicLastNames[randomIndex(amharicLastNames)],
+                dob: `${String(Math.floor(Math.random() * 28) + 1).padStart(2, '0')}/${String(Math.floor(Math.random() * 12) + 1).padStart(2, '0')}/${Math.floor(Math.random() * 40) + 1960}`,
+                gender: genders[randomIndex(genders)],
+                issueDate: '05/01/2020',
+                expiryDate: '04/30/2030',
+                phone: `+251 9${Math.floor(Math.random() * 9) + 1}${Math.floor(Math.random() * 9)} XXX XXX`
+            };
+        }
+
+        // Step 1: FIN Verification
+        document.getElementById('finForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const fin = document.getElementById('finInput').value.trim();
+            const errorEl = document.getElementById('errorMessage');
+            
+            if (fin.length !== 12 || !/^\d{12}$/.test(fin)) {
+                errorEl.textContent = '❌ Please enter a valid 12-digit FIN';
+                errorEl.classList.add('show');
+                return;
+            }
+            
+            errorEl.classList.remove('show');
+            
+            const btn = document.getElementById('verifyBtn');
+            btn.disabled = true;
+            btn.classList.add('loading');
+            btn.innerHTML = '<div class="fayda-spinner"></div> Verifying...';
+            
+            // Simulate API call
+            await new Promise(resolve => setTimeout(resolve, 2000));
+            
+            // Store FIN for later use
+            window.faydaFin = fin;
+            
+            // Update phone display
+            document.getElementById('phoneDisplay').textContent = `+251 9${Math.floor(Math.random() * 9) + 1}${Math.floor(Math.random() * 9)} XXX XXX`;
+            
+            // Move to OTP step
+            showStep('step2');
+            btn.disabled = false;
+            btn.classList.remove('loading');
+            btn.textContent = 'Verify Identity';
+            
+            // Focus first OTP input
+            setTimeout(() => document.querySelector('.otp-input').focus(), 100);
+        });
+
+        // OTP Input handling
+        const otpInputs = document.querySelectorAll('.otp-input');
+        otpInputs.forEach((input, index) => {
+            input.addEventListener('keydown', (e) => {
+                if (!/^\d$/.test(e.key) && !['Backspace', 'Tab', 'Enter'].includes(e.key)) {
+                    e.preventDefault();
+                }
+            });
+            
+            input.addEventListener('input', (e) => {
+                if (e.target.value.length === 1 && index < otpInputs.length - 1) {
+                    otpInputs[index + 1].focus();
+                }
+                
+                // Update filled state
+                otpInputs.forEach((inp) => {
+                    if (inp.value) inp.classList.add('filled');
+                    else inp.classList.remove('filled');
+                });
+            });
+            
+            input.addEventListener('keydown', (e) => {
+                if (e.key === 'Backspace' && e.target.value === '' && index > 0) {
+                    otpInputs[index - 1].focus();
+                }
+            });
+        });
+
+        // Step 2: OTP Verification
+        document.getElementById('otpForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const otp = Array.from(otpInputs).map(input => input.value).join('');
+            const errorEl = document.getElementById('errorMessage2');
+            
+            if (otp.length !== 6) {
+                errorEl.textContent = '❌ Please enter all 6 digits';
+                errorEl.classList.add('show');
+                return;
+            }
+            
+            // Accept any OTP for demo (123456 is example)
+            if (!/^\d{6}$/.test(otp)) {
+                errorEl.textContent = '❌ Invalid OTP format';
+                errorEl.classList.add('show');
+                return;
+            }
+            
+            errorEl.classList.remove('show');
+            
+            const btn = document.getElementById('verifyOtpBtn');
+            btn.disabled = true;
+            btn.classList.add('loading');
+            btn.innerHTML = '<div class="fayda-spinner"></div> Verifying...';
+            
+            // Simulate API verification
+            await new Promise(resolve => setTimeout(resolve, 1500));
+            
+            btn.disabled = false;
+            btn.classList.remove('loading');
+            btn.textContent = 'Verify OTP';
+            
+            // Generate mock user data
+            const user = generateMockUser(window.faydaFin);
+            
+            // Populate success view
+            document.getElementById('userName').textContent = `${user.firstName} ${user.lastName}`;
+            document.getElementById('userNameAmharic').textContent = `${user.firstNameAmharic} ${user.lastNameAmharic}`;
+            document.getElementById('userFin').textContent = user.fin;
+            document.getElementById('userDob').textContent = user.dob;
+            document.getElementById('userGender').textContent = user.gender;
+            document.getElementById('userIssueDate').textContent = user.issueDate;
+            document.getElementById('userExpiryDate').textContent = user.expiryDate;
+            
+            // Move to success step
+            showStep('step3');
+        });
+
+        // Resend OTP
+        document.getElementById('resendLink').addEventListener('click', async (e) => {
+            e.preventDefault();
+            const link = e.target;
+            link.textContent = 'Sending...';
+            link.style.pointerEvents = 'none';
+            
+            await new Promise(resolve => setTimeout(resolve, 1500));
+            
+            link.textContent = 'Resend';
+            link.style.pointerEvents = 'auto';
+            
+            // Clear OTP inputs
+            otpInputs.forEach(input => {
+                input.value = '';
+                input.classList.remove('filled');
+            });
+            otpInputs[0].focus();
+        });
+
+        // Helper functions
+        function showStep(stepId) {
+            document.querySelectorAll('.fayda-step').forEach(step => step.classList.remove('active'));
+            document.getElementById(stepId).classList.add('active');
+        }
+
+        function resetVerification() {
+            showStep('step1');
+            document.getElementById('finForm').reset();
+            document.getElementById('otpForm').reset();
+            otpInputs.forEach(input => input.classList.remove('filled'));
+            document.getElementById('errorMessage').classList.remove('show');
+            document.getElementById('errorMessage2').classList.remove('show');
+            document.getElementById('finInput').focus();
+        }
+
+        function completeVerification() {
+            alert('Verification complete! Data can be sent to backend API:\n\n' + JSON.stringify({
+                fin: window.faydaFin,
+                userName: document.getElementById('userName').textContent,
+                dob: document.getElementById('userDob').textContent,
+                gender: document.getElementById('userGender').textContent,
+                verified: true,
+                timestamp: new Date().toISOString()
+            }, null, 2));
+        }
+
+        // Format FIN input with visual feedback
+        document.getElementById('finInput').addEventListener('input', (e) => {
+            e.target.value = e.target.value.replace(/\D/g, '');
+        });
+
+        // Initial focus
+        window.addEventListener('load', () => {
+            document.getElementById('finInput').focus();
+        });
+    </script>
+</body>
+</html>
