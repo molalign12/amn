@@ -1,10 +1,8 @@
 <?php
 ini_set('display_errors',1);
 error_reporting(E_ALL);
-if (session_status() === PHP_SESSION_NONE) {
-    session_save_path('C:/xampp/tmp');
-    session_start();
-}
+require_once __DIR__ . '/bootstrap.php';
+
 if (isset($_SESSION['user'])) {
     $role = $_SESSION['user']['role'];
     if ($role==='admin')        { header('Location:/amnen/views/admin/dashboard.php');        exit; }
@@ -15,8 +13,6 @@ if (isset($_SESSION['user'])) {
 
 $error = '';
 if ($_SERVER['REQUEST_METHOD']==='POST') {
-    require_once __DIR__ . '/config/db.php';
-    require_once __DIR__ . '/classes/User.php';
     $username = trim($_POST['username'] ?? '');
     $password = $_POST['password'] ?? '';
     if (!$username || !$password) {

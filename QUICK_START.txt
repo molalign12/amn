@@ -1,0 +1,68 @@
+# ⚡ AMNEN Hotel - QUICK INSTALL (3 Steps Only!)
+
+## Step 1: Extract to XAMPP
+```
+1. Download and extract the amnen.zip file
+2. Copy the entire "amnen" folder to: C:\xampp\htdocs\
+   Result: C:\xampp\htdocs\amnen\ ← all files here
+```
+
+## Step 2: Start XAMPP & Run Setup
+```
+1. Open XAMPP Control Panel
+2. Start Apache (click Start)
+3. Start MySQL (click Start)
+4. Open browser → http://localhost/amnen/setup.php
+5. Wait for green ✓ checkmarks
+```
+
+## Step 3: Login!
+```
+Go to: http://localhost/amnen/index.php
+Login:
+  Username: admin
+  Password: Admin@123
+```
+
+---
+
+## That's It! 🎉
+
+### What You Get:
+✅ 6 Complete Features Working  
+✅ Database Auto-Setup  
+✅ Admin Account Ready  
+✅ 4 Sample Rooms  
+✅ All Classes Connected  
+
+---
+
+## If Something Goes Wrong
+
+**"Database error"**
+→ Run `http://localhost/amnen/setup.php` again
+
+**"Page not found"**
+→ Check URL: `http://localhost/amnen/index.php`
+
+**"Login fails"**
+→ Check diagnostic: `http://localhost/amnen/diagnostic.php`
+
+---
+
+## Admin Dashboard Access
+After login as admin, you can access:
+- Manage rooms
+- View bookings
+- Process payments
+- Check guest feedback
+- View staff (receptionist, manager)
+
+---
+
+## Detailed Setup Guide
+See **SETUP_XAMPP.md** for complete instructions
+
+---
+
+**Everything is ready. Start using AMNEN now!**

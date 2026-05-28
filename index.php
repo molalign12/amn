@@ -1,8 +1,5 @@
 <?php
-if (session_status() === PHP_SESSION_NONE) {
-    session_save_path('C:/xampp/tmp');
-    session_start();
-}
+require_once __DIR__ . '/bootstrap.php';
 
 // If already logged in, redirect to their dashboard
 if (isset($_SESSION['user'])) {
@@ -16,12 +13,6 @@ if (isset($_SESSION['user'])) {
     header('Location: ' . ($map[$role] ?? '/amnen/views/guest/home.php'));
     exit;
 }
-
-// Load rooms from DB to show locked previews
-require_once __DIR__ . '/config/db.php';
-require_once __DIR__ . '/classes/Room.php';
-require_once __DIR__ . '/classes/Feedback.php';
-require_once __DIR__ . '/classes/Reservation.php';
 
 $rooms = [];
 $totalRoomCount = 0;

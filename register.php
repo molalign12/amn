@@ -1,7 +1,5 @@
 <?php
-if (session_status() === PHP_SESSION_NONE) { session_save_path('C:/xampp/tmp'); session_start(); }
-require_once __DIR__ . '/config/db.php';
-require_once __DIR__ . '/classes/User.php';
+require_once __DIR__ . '/bootstrap.php';
 
 $error = null;
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {

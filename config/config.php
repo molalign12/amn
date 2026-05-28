@@ -32,6 +32,15 @@ define('CHAPA_CALLBACK_URL', getenv('APP_URL') ?? 'http://localhost/amnen' . '/a
 define('SESSION_LIFETIME', 3600 * 24); // 24 hours
 define('SESSION_NAME', 'amnen_session_' . md5(APP_NAME));
 
+// Set session save path (portable for all OS)
+$sessionPath = sys_get_temp_dir() . '/amnen_sessions';
+if (!is_dir($sessionPath) && is_writable(sys_get_temp_dir())) {
+    mkdir($sessionPath, 0755, true);
+}
+if (is_dir($sessionPath) && is_writable($sessionPath)) {
+    session_save_path($sessionPath);
+}
+
 // File Upload Configuration
 define('UPLOAD_DIR', __DIR__ . '/../uploads/');
 define('ALLOWED_IMAGE_TYPES', ['image/jpeg', 'image/png', 'image/webp']);
