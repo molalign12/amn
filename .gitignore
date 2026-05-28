@@ -1,0 +1,17 @@
+*.php.swp
+*.log
+.env
+.env.local
+.DS_Store
+node_modules/
+vendor/
+composer.lock
+package-lock.json
+uploads/
+tmp/
+cache/
+.vscode/
+.idea/
+dist/
+build/
+*.pid
